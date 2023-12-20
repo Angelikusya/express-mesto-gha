@@ -19,10 +19,16 @@ const getUsers = (req, res) => {
 const getUserByID = (req, res) => {
   const { idUser } = req.params;
   userModel.findById(idUser)
-    .orFail(new Error('notValidId'))
-    .then((user) => {
-      res.status(STATUS_OK).send(user);
-    })
+  .then((user) => {
+    if (!user) {
+      return res
+      .status(userNotValidId)
+      .send({ message: userNotValidId.message });
+    }
+    return res
+    .status(STATUS_OK)
+    .send(user);
+  })
     .catch((error) => {
       if (error.name === 'CastError') {
         return res
@@ -31,11 +37,11 @@ const getUserByID = (req, res) => {
       } else if (error.message === 'notValidId') {
         res
           .status(userNotValidId.status)
-          .send({ message: userNotValidId.message, error: message.error});
+          .send({ message: userNotValidId.message });
       }
       return res
         .status(defaultError.status)
-        .send({ message: defaultError.message, error: message.error});
+        .send({ message: defaultError.message });
     });
 };
 
