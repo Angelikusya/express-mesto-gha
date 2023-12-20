@@ -71,7 +71,7 @@ const updateUserAvatar = (req, res) => {
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
     .orFail(new Error('notValidId'))
-    .then((user) => res.status(STATUS_CREATED).send(user))
+    .then((user) => res.status(STATUS_OK).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         return res.status(ERROR_CODE).send({ message: 'Информация о аватаре пользователя не обновлена', error: error.message });
