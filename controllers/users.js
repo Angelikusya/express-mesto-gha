@@ -11,8 +11,12 @@ const STATUS_CREATED = 201;
 // получить всех пользователя
 const getUsers = (req, res) => {
   userModel.find()
-    .then((users) => res.status(STATUS_OK).send(users))
-    .catch((error) => res.status(defaultError.status).send({ message: defaultError.message}));
+    .then((users) => res
+      .status(STATUS_OK)
+      .send(users))
+    .catch((error) => res
+      .status(defaultError.status)
+      .send({ message: defaultError.message}));
 };
 
 // получить пользователя по определенному ID
@@ -52,7 +56,9 @@ const createUser = (req, res) => {
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(userValidationError.status).send({ message: userValidationError.message});
+        return res
+        .status(userValidationError.status)
+        .send({ message: userValidationError.message});
       }
       return res
         .status(defaultError.status)
@@ -65,9 +71,10 @@ const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
-    .orFail(new Error('notValidId'))
     .then((user) => {
-      res.status(STATUS_OK).send(user);
+      res
+        .status(STATUS_OK)
+        .send(user);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
@@ -77,11 +84,11 @@ const updateUserInfo = (req, res) => {
       } else if (error.message === 'notValidId') {
         res
           .status(userNotValidId.status)
-          .send({ message: userNotValidId.message, error: message.error});
+          .send({ message: userNotValidId.message });
       }
       return res
         .status(defaultError.status)
-        .send({ message: defaultError.message, error: message.error});
+        .send({ message: defaultError.message });
     });
 };
 
@@ -89,7 +96,6 @@ const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
-    .orFail(new Error('notValidId'))
     .then((user) => {
       res.status(STATUS_OK).send(user);
     })
