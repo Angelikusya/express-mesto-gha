@@ -1,7 +1,14 @@
 const userModel = require('../models/user');
+const {
+  defaultError,
+  userValidationError,
+  userNotValidId,
+  cardValidationError,
+  cardNotValidId,
+} = require('../utils/errors');
 
 const STATUS_OK = 200;
-const STATUS_CREATED = 201;
+const STATUS_CREATED = 200;
 const ERROR_CODE = 400;
 const STATUS_NOT_FOUND = 404;
 const STATUS_SERVER_ERROR = 500;
@@ -10,7 +17,7 @@ const STATUS_SERVER_ERROR = 500;
 const getUsers = (req, res) => {
   userModel.find()
     .then((users) => res.status(STATUS_OK).send(users))
-    .catch((error) => res.status(STATUS_SERVER_ERROR).send({ message: 'Пользователь не найден', error: error.message }));
+    .catch((error) => res.status(defaultError.status).send({ message: `${defaultError.message} ${error.name}` }));
 };
 
 // получить пользователя по определенному ID
@@ -55,7 +62,7 @@ const updateUserInfo = (req, res) => {
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
     .orFail(new Error('notValidId'))
-    .then((user) => res.status(STATUS_CREATED).send(user))
+    .then((user) => res.status(STATUS_OK).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         return res.status(ERROR_CODE).send({ message: 'Информация о пользователе не обновлена', error: error.message });
