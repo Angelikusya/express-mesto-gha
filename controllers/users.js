@@ -3,21 +3,16 @@ const {
   defaultError,
   userValidationError,
   userNotValidId,
-  cardValidationError,
-  cardNotValidId,
 } = require('../utils/errors');
 
 const STATUS_OK = 200;
-const STATUS_CREATED = 200;
-const ERROR_CODE = 400;
-const STATUS_NOT_FOUND = 404;
-const STATUS_SERVER_ERROR = 500;
+const STATUS_CREATED = 201;
 
 // получить всех пользователя
 const getUsers = (req, res) => {
   userModel.find()
     .then((users) => res.status(STATUS_OK).send(users))
-    .catch((error) => res.status(defaultError.status).send({ message: `${defaultError.message} ${error.name}` }));
+    .catch((error) => res.status(defaultError.status).send({ message: defaultError.message}));
 };
 
 // получить пользователя по определенному ID
@@ -26,18 +21,21 @@ const getUserByID = (req, res) => {
   userModel.findById(idUser)
     .orFail(new Error('notValidId'))
     .then((user) => {
-      if (!user) {
-        return res.status(STATUS_NOT_FOUND).send({ message: 'Id пользователя не найдено' });
-      }
-      return res.status(STATUS_OK).send(user);
+      res.status(STATUS_OK).send(user);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        return res.status(ERROR_CODE).send({ message: 'Id пользователя не найдено' });
+        return res
+          .status(userValidationError.status)
+          .send({ message: userValidationError.message});
+      } else if (error.message === 'notValidId') {
+        res
+          .status(userNotValidId.status)
+          .send({ message: userNotValidId.message, error: message.error});
       }
       return res
-        .status(STATUS_SERVER_ERROR)
-        .send({ message: 'Ошибка на стороне севера', error: error.message });
+        .status(defaultError.status)
+        .send({ message: defaultError.message, error: message.error});
     });
 };
 
@@ -48,11 +46,11 @@ const createUser = (req, res) => {
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Id новый пользователь не создан' });
+        return res.status(userValidationError.status).send({ message: userValidationError.message});
       }
       return res
-        .status(STATUS_SERVER_ERROR)
-        .send({ message: 'Ошибка на стороне севера', error: error.message });
+        .status(defaultError.status)
+        .send({ message: defaultError.message });
     });
 };
 
@@ -62,14 +60,22 @@ const updateUserInfo = (req, res) => {
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
     .orFail(new Error('notValidId'))
-    .then((user) => res.status(STATUS_OK).send(user))
+    .then((user) => {
+      res.status(STATUS_OK).send(user);
+    })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Информация о пользователе не обновлена', error: error.message });
+      if (error.name === 'CastError') {
+        return res
+          .status(userValidationError.status)
+          .send({ message: userValidationError.message});
+      } else if (error.message === 'notValidId') {
+        res
+          .status(userNotValidId.status)
+          .send({ message: userNotValidId.message, error: message.error});
       }
       return res
-        .status(STATUS_SERVER_ERROR)
-        .send({ message: 'Ошибка на стороне севера', error: error.message });
+        .status(defaultError.status)
+        .send({ message: defaultError.message, error: message.error});
     });
 };
 
@@ -78,14 +84,22 @@ const updateUserAvatar = (req, res) => {
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
     .orFail(new Error('notValidId'))
-    .then((user) => res.status(STATUS_OK).send(user))
+    .then((user) => {
+      res.status(STATUS_OK).send(user);
+    })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Информация о аватаре пользователя не обновлена', error: error.message });
+      if (error.name === 'CastError') {
+        return res
+          .status(userValidationError.status)
+          .send({ message: userValidationError.message});
+      } else if (error.message === 'notValidId') {
+        res
+          .status(userNotValidId.status)
+          .send({ message: userNotValidId.message, error: message.error});
       }
       return res
-        .status(STATUS_SERVER_ERROR)
-        .send({ message: 'Ошибка на стороне севера', error: error.message });
+        .status(defaultError.status)
+        .send({ message: defaultError.message, error: message.error});
     });
 };
 
