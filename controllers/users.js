@@ -22,7 +22,7 @@ const getUserByID = (req, res) => {
   .then((user) => {
     if (!user) {
       return res
-      .status(userNotValidId)
+      .status(userNotValidId.status)
       .send({ message: userNotValidId.message });
     }
     return res
