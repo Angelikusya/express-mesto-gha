@@ -7,8 +7,8 @@ const {
   cardNotValidId,
 } = require('../utils/errors');
 
-const STATUS_OK = 201;
-const STATUS_CREATED = 201;
+const STATUS_OK = 200;
+const STATUS_CREATED = 200;
 const ERROR_CODE = 400;
 const STATUS_NOT_FOUND = 404;
 const STATUS_SERVER_ERROR = 500;
