@@ -53,7 +53,9 @@ const getUserByID = (req, res) => {
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   userModel.create({ name, about, avatar })
-    .then((user) => res.status(STATUS_CREATED).send(user))
+    .then((user) => res
+      .status(STATUS_CREATED)
+      .send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         return res
@@ -77,14 +79,14 @@ const updateUserInfo = (req, res) => {
         .send(user);
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError') {
         return res
           .status(userValidationError.status)
           .send({ message: userValidationError.message});
       } else if (error.message === 'notValidId') {
         res
-          .status(userValidationError.status)
-          .send({ message: userValidationError.message });
+          .status(userNotValidId.status)
+          .send({ message: userNotValidId.message });
       }
       return res
         .status(defaultError.status)
