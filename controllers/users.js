@@ -17,6 +17,7 @@ const getUsers = (req, res) => {
 const getUserByID = (req, res) => {
   const { idUser } = req.params;
   userModel.findById(idUser)
+    .orFail(new Error('notValidId'))
     .then((user) => {
       if (!user) {
         return res.status(STATUS_NOT_FOUND).send({ message: 'Id пользователя не найдено' });
@@ -53,6 +54,7 @@ const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
+    .orFail(new Error('notValidId'))
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -68,6 +70,7 @@ const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
+    .orFail(new Error('notValidId'))
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((error) => {
       if (error.name === 'ValidationError') {

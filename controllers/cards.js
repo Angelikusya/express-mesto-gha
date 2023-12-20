@@ -21,8 +21,8 @@ const createCard = (req, res) => {
   cardModel.create({ name, link, owner: req.user._id })
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((error) => {
-      if (error.name === "ValidationError" ) {
-        return res.status(ERROR_CODE).send({ message: "Новая карточка не создана" });
+      if (error.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Новая карточка не создана' });
       }
       return res
         .status(STATUS_SERVER_ERROR)
@@ -35,13 +35,13 @@ const deleteCard = (req, res) => {
   cardModel.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(STATUS_NOT_FOUND).send({ message: "Карточка не найдена" });
+        return res.status(STATUS_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
-      res.status(STATUS_NO_CONTENT).send({ message: "Карточка успешно удалена" });
+      res.status(STATUS_NO_CONTENT).send({ message: 'Карточка успешно удалена' });
     })
     .catch((error) => {
-      if (error.name === "ValidationError" ) {
-        return res.status(ERROR_CODE).send({ message: "Карточка не удалена" });
+      if (error.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Карточка не удалена' });
       }
       return res
         .status(STATUS_SERVER_ERROR)
@@ -49,7 +49,7 @@ const deleteCard = (req, res) => {
     });
 };
 
-//поставить лайк
+// поставить лайк
 const likeCard = (req, res) => {
   cardModel.findByIdAndUpdate(
     req.params.cardId,
@@ -58,8 +58,8 @@ const likeCard = (req, res) => {
   )
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((error) => {
-      if (error.name === "ValidationError" ) {
-        return res.status(ERROR_CODE).send({ message: "Лайк не удален" });
+      if (error.name === 'ValidationError' ) {
+        return res.status(ERROR_CODE).send({ message: 'Лайк не удален' });
       }
       return res
         .status(STATUS_SERVER_ERROR)
@@ -67,7 +67,7 @@ const likeCard = (req, res) => {
     });
 };
 
-//поставить лайк
+// удалить лайк
 const deleteLikeCard = (req, res) => {
   cardModel.findByIdAndUpdate(
     req.params.cardId,
@@ -76,8 +76,8 @@ const deleteLikeCard = (req, res) => {
   )
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((error) => {
-      if (error.name === "ValidationError" ) {
-        return res.status(ERROR_CODE).send({ message: "Лайк не удален" });
+      if (error.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Лайк не удален' });
       }
       return res
         .status(500)
