@@ -83,8 +83,8 @@ const updateUserInfo = (req, res) => {
           .send({ message: userValidationError.message});
       } else if (error.message === 'notValidId') {
         res
-          .status(userNotValidId.status)
-          .send({ message: userNotValidId.message });
+          .status(userValidationError.status)
+          .send({ message: userValidationError.message });
       }
       return res
         .status(defaultError.status)
@@ -92,6 +92,7 @@ const updateUserInfo = (req, res) => {
     });
 };
 
+// обновить аватар пользователя
 const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   console.log(req.user);
