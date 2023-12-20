@@ -1,5 +1,11 @@
 const { Router } = require('express');
-const { getUsers, createUser, getUserByID, updateUserInfo, updateUserAvatar } = require('../controllers/users');
+const {
+  getUsers,
+  createUser,
+  getUserByID,
+  updateUserInfo,
+  updateUserAvatar,
+} = require('../controllers/users');
 
 const userRouter = Router();
 

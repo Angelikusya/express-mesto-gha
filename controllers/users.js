@@ -10,7 +10,7 @@ const STATUS_SERVER_ERROR = 500;
 const getUsers = (req, res) => {
   userModel.find()
     .then((users) => res.status(STATUS_OK).send(users))
-    .catch((error) => res.status(STATUS_SERVER_ERROR).send({ message: "Пользователь не найден", error: error.message }));
+    .catch((error) => res.status(STATUS_SERVER_ERROR).send({ message: 'Пользователь не найден', error: error.message }));
 };
 
 // получить пользователя по определенному ID
@@ -19,13 +19,13 @@ const getUserByID = (req, res) => {
   userModel.findById(idUser)
     .then((user) => {
       if (!user) {
-        return res.status(STATUS_NOT_FOUND).send({ message: "Id пользователя не найдено" });
+        return res.status(STATUS_NOT_FOUND).send({ message: 'Id пользователя не найдено' });
       }
       return res.status(STATUS_OK).send(user);
     })
     .catch((error) => {
-      if (error.name === "CastError" ) {
-        return res.status(ERROR_CODE).send({ message: "Id пользователя не найдено" });
+      if (error.name === 'CastError') {
+        return res.status(ERROR_CODE).send({ message: 'Id пользователя не найдено' });
       }
       return res
         .status(STATUS_SERVER_ERROR)
@@ -39,8 +39,8 @@ const createUser = (req, res) => {
   userModel.create({ name, about, avatar })
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((error) => {
-      if (error.name === "ValidationError" ) {
-        return res.status(ERROR_CODE).send({ message: "Id новый пользователь не создан" });
+      if (error.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Id новый пользователь не создан' });
       }
       return res
         .status(STATUS_SERVER_ERROR)
@@ -55,8 +55,8 @@ const updateUserInfo = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((error) => {
-      if (error.name === "ValidationError") {
-        return res.status(ERROR_CODE).send({ message: "Информация о пользователе не обновлена", error: error.message });
+      if (error.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Информация о пользователе не обновлена', error: error.message });
       }
       return res
         .status(STATUS_SERVER_ERROR)
@@ -70,8 +70,8 @@ const updateUserAvatar = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((error) => {
-      if (error.name === "ValidationError") {
-        return res.status(ERROR_CODE).send({ message: "Информация о аватаре пользователя не обновлена", error: error.message });
+      if (error.name === 'ValidationError') {
+        return res.status(ERROR_CODE).send({ message: 'Информация о аватаре пользователя не обновлена', error: error.message });
       }
       return res
         .status(STATUS_SERVER_ERROR)
