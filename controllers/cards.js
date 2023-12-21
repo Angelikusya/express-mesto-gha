@@ -7,10 +7,6 @@ const {
 
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
-const ERROR_CODE = 400;
-const STATUS_NOT_FOUND = 404;
-const STATUS_NO_CONTENT = 204;
-const STATUS_SERVER_ERROR = 500;
 
 // получить все карточки
 const getCards = (req, res) => {
@@ -48,17 +44,17 @@ const deleteCard = (req, res) => {
   cardModel.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(STATUS_NOT_FOUND).send({ message: 'Карточка не найдена' });
+        return res.status(cardNotValidId.status).send({ message: cardNotValidId.message });
       }
-      res.status(STATUS_NO_CONTENT).send({ message: 'Карточка успешно удалена' });
+      res.status(cardNotValidId.status).send({ message: cardNotValidId.message });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Карточка не удалена' });
+        return res.status(cardValidationError.status).send({ message: cardValidationError.message });
       }
       return res
-        .status(STATUS_SERVER_ERROR)
-        .send({ message: 'Ошибка на стороне сервера', error: error.message });
+        .status(defaultError)
+        .send({ message: defaultError.message });
     });
 };
 
@@ -72,11 +68,11 @@ const likeCard = (req, res) => {
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((error) => {
       if (error.name === 'ValidationError' ) {
-        return res.status(ERROR_CODE).send({ message: 'Лайк не удален' });
+        return res.status(cardValidationError).send({ message: cardValidationError.message });
       }
       return res
-        .status(STATUS_SERVER_ERROR)
-        .send({ message: 'Ошибка на стороне севера', error: error.message });
+        .status(defaultError)
+        .send({ message: defaultError.message });
     });
 };
 
@@ -90,11 +86,11 @@ const deleteLikeCard = (req, res) => {
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Лайк не удален' });
+        return res.status(cardValidationError.staus).send({ message: cardValidationError.message });
       }
       return res
-        .status(500)
-        .send({ message: 'Ошибка на стороне севера', error: error.message });
+        .status(defaultError)
+        .send({ message: defaultError.message });
     });
 };
 
