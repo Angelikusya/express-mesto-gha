@@ -1,4 +1,9 @@
 const cardModel = require('../models/cards');
+const {
+  defaultError,
+  cardValidationError,
+  cardNotValidId,
+} = require('../utils/errors');
 
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
@@ -10,8 +15,12 @@ const STATUS_SERVER_ERROR = 500;
 // получить все карточки
 const getCards = (req, res) => {
   cardModel.find()
-    .then((cards) => res.status(STATUS_OK).send(cards))
-    .catch((error) => res.status(STATUS_SERVER_ERROR).send({ message: 'Ошибка на стороне севера', error: error.message }));
+    .then((cards) => res
+      .status(STATUS_OK)
+      .send(cards))
+    .catch((error) => res
+      .status(defaultError.status)
+      .send({ message: defaultError.message}));
 };
 
 // создать новую карточку
@@ -19,14 +28,18 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
   console.log(req.user._id);
   cardModel.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(STATUS_CREATED).send(card))
+    .then((card) => res
+      .status(STATUS_CREATED)
+      .send({ _id: card._id }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: 'Новая карточка не создана' });
+        return res
+          .status(cardValidationError.status)
+          .send({ message: cardValidationError.message });
       }
       return res
-        .status(STATUS_SERVER_ERROR)
-        .send({ message: 'Ошибка на стороне севера', error: error.message });
+        .status(defaultError.status)
+        .send({ message: defaultError.message});
     });
 };
 
