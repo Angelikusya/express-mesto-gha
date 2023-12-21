@@ -47,9 +47,8 @@ const deleteCard = (req, res) => {
         return res
           .status(cardNotValidId.status)
           .send({ message: cardNotValidId.message });
-      } res
-        .status(cardNotValidId.status)
-        .send({ message: cardNotValidId.message });
+      }
+      return res.status(STATUS_OK).send({card });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -91,6 +90,7 @@ const likeCard = (req, res) => {
         .send({ message: defaultError.message });
     });
 };
+
 // удалить лайк
 const deleteLikeCard = (req, res) => {
   cardModel.findByIdAndUpdate(
@@ -98,25 +98,23 @@ const deleteLikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-  .then((card) => {
-    if (!card) {
-      return res.status(cardValidationError.status).send({ message: cardValidationError.message });
-    }
-    return res.status(STATUS_OK).send(card);
-  })
-  .catch((error) => {
-    if (error.name === 'ValidationError') {
+    .then((card) => {
+      if (!card) {
+        return res.status(cardNotValidId.status).send({ message: 'Некорректный id карточки' });
+      }
+      return res.status(STATUS_OK).send(card);
+    })
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        return res
+          .status(cardValidationError.status)
+          .send({ message: cardValidationError.message });
+      }
       return res
-        .status(cardValidationError.status)
-        .send({ message: cardValidationError.message });
-    }
-    return res
-      .status(defaultError.status)
-      .send({ message: defaultError.message });
-  });
+        .status(defaultError.status)
+        .send({ message: defaultError.message });
+    });
 };
-
-
 
 module.exports = {
   getCards,
