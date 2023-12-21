@@ -106,7 +106,7 @@ const deleteLikeCard = (req, res) => {
           .send({ message: cardValidationError.message });
       }
       return res
-        .status(defaultError)
+        .status(defaultError.status)
         .send({ message: defaultError.message });
     });
 };
