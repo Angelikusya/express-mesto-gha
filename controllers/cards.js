@@ -106,14 +106,14 @@ const deleteLikeCard = (req, res) => {
       return res.status(STATUS_OK).send(card);
     })
     .catch((error) => {
-      if (error.name === 'ValidationError' && 'CastError') {
+      if (error.name === 'ValidationError') {
         return res
           .status(cardValidationError.status)
           .send({ message: cardValidationError.message });
       }
       return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
+        .status(cardValidationError.status)
+        .send({ message: cardValidationError.message });
     });
 };
 
