@@ -70,15 +70,20 @@ const likeCard = (req, res) => {
   )
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((error) => {
-      if (error.name === 'ValidationError' ) {
-        return res.status(cardValidationError).send({ message: cardValidationError.message });
+      if (error.name === 'CastError') {
+        return res
+          .status(cardValidationError.status)
+          .send({ message: cardValidationError.message});
+      } else if (error.message === 'notValidId') {
+        res
+          .status(cardNotValidId.status)
+          .send({ message: cardNotValidId.message });
       }
       return res
-        .status(defaultError)
+        .status(defaultError.status)
         .send({ message: defaultError.message });
     });
 };
-
 // удалить лайк
 const deleteLikeCard = (req, res) => {
   cardModel.findByIdAndUpdate(
