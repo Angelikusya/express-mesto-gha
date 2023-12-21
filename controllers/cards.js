@@ -106,7 +106,7 @@ const deleteLikeCard = (req, res) => {
       return res.status(STATUS_OK).send(card);
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'ValidationError' && 'CastError') {
         return res
           .status(cardValidationError.status)
           .send({ message: cardValidationError.message });
