@@ -14,31 +14,31 @@ const getUsers = (req, res) => {
     .then((users) => res
       .status(STATUS_OK)
       .send(users))
-    .catch((error) => res
+    .catch(() => res
       .status(defaultError.status)
-      .send({ message: defaultError.message}));
+      .send({ message: defaultError.message }));
 };
 
 // получить пользователя по определенному ID
 const getUserByID = (req, res) => {
   const { idUser } = req.params;
   userModel.findById(idUser)
-  .then((user) => {
-    if (!user) {
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(userNotValidId.status)
+          .send({ message: userNotValidId.message });
+      }
       return res
-      .status(userNotValidId.status)
-      .send({ message: userNotValidId.message });
-    }
-    return res
-    .status(STATUS_OK)
-    .send(user);
-  })
+        .status(STATUS_OK)
+        .send(user);
+    })
     .catch((error) => {
       if (error.name === 'CastError') {
         return res
           .status(userValidationError.status)
-          .send({ message: userValidationError.message});
-      } else if (error.message === 'notValidId') {
+          .send({ message: userValidationError.message });
+      } if (error.message === 'notValidId') {
         res
           .status(userNotValidId.status)
           .send({ message: userNotValidId.message });
@@ -59,8 +59,8 @@ const createUser = (req, res) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         return res
-        .status(userValidationError.status)
-        .send({ message: userValidationError.message});
+          .status(userValidationError.status)
+          .send({ message: userValidationError.message });
       }
       return res
         .status(defaultError.status)
@@ -82,8 +82,8 @@ const updateUserInfo = (req, res) => {
       if (error.name === 'ValidationError') {
         return res
           .status(userValidationError.status)
-          .send({ message: userValidationError.message});
-      } else if (error.message === 'notValidId') {
+          .send({ message: userValidationError.message });
+      } if (error.message === 'notValidId') {
         res
           .status(userNotValidId.status)
           .send({ message: userNotValidId.message });
@@ -106,15 +106,15 @@ const updateUserAvatar = (req, res) => {
       if (error.name === 'CastError') {
         return res
           .status(userValidationError.status)
-          .send({ message: userValidationError.message});
-      } else if (error.message === 'notValidId') {
+          .send({ message: userValidationError.message });
+      } if (error.message === 'notValidId') {
         res
           .status(userNotValidId.status)
-          .send({ message: userNotValidId.message, error: message.error});
+          .send({ message: userNotValidId.message });
       }
       return res
         .status(defaultError.status)
-        .send({ message: defaultError.message, error: message.error});
+        .send({ message: defaultError.message });
     });
 };
 

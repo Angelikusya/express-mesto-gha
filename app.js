@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 
 const { router } = require('./routes');
 
@@ -21,7 +22,7 @@ app.use((req, res, next) => {
   };
   next();
 });
-
+app.use(helmet());
 app.use(router);
 
 app.listen(PORT, () => {

@@ -14,9 +14,9 @@ const getCards = (req, res) => {
     .then((cards) => res
       .status(STATUS_OK)
       .send(cards))
-    .catch((error) => res
+    .catch(() => res
       .status(defaultError.status)
-      .send({ message: defaultError.message}));
+      .send({ message: defaultError.message }));
 };
 
 // создать новую карточку
@@ -35,7 +35,7 @@ const createCard = (req, res) => {
       }
       return res
         .status(defaultError.status)
-        .send({ message: defaultError.message});
+        .send({ message: defaultError.message });
     });
 };
 
@@ -62,7 +62,6 @@ const deleteCard = (req, res) => {
     });
 };
 
-
 // поставить лайк
 const likeCard = (req, res) => {
   cardModel.findByIdAndUpdate(
@@ -74,14 +73,14 @@ const likeCard = (req, res) => {
       if (!card) {
         return res.status(cardNotValidId.status).send({ message: cardNotValidId.message });
       }
-      return res.status(STATUS_OK).send({card });
+      return res.status(STATUS_OK).send({ card });
     })
     .catch((error) => {
       if (error.name === 'CastError') {
         return res
           .status(cardValidationError.status)
-          .send({ message: cardValidationError.message});
-      } else if (error.message === 'notValidId') {
+          .send({ message: cardValidationError.message });
+      } if (error.message === 'notValidId') {
         res
           .status(cardNotValidId.status)
           .send({ message: cardNotValidId.message });
