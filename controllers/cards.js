@@ -45,13 +45,13 @@ const deleteCard = (req, res) => {
     .then((card) => {
       if (!card) {
         return res
-          .status(cardValidationError.status)
-          .send({ message: cardValidationError.message });
+          .status(cardNotValidId.status)
+          .send({ message: cardNotValidId.message });
       }
       return res.status(STATUS_OK).send({ card });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'CastError' && 'ValidationError') {
         return res
           .status(cardValidationError.status)
           .send({ message: cardValidationError.message });
