@@ -98,12 +98,12 @@ const deleteLikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-  .then((card) => {
-    if (!card) {
-      return res.status(cardValidationError.status).send({ message: cardValidationError.message });
-    }
-    return res.status(STATUS_CREATED).send(card);
-  })
+    .then((card) => {
+      if (!card) {
+        return res.status(cardNotValidId.status).send({ message: 'Некорректный id карточки' });
+      }
+      return res.status(STATUS_CREATED).send(card);
+    })
     .catch((error) => {
       if (error.name === 'ValidationError') {
         return res
@@ -115,6 +115,7 @@ const deleteLikeCard = (req, res) => {
         .send({ message: defaultError.message });
     });
 };
+
 
 module.exports = {
   getCards,
