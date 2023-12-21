@@ -53,7 +53,9 @@ const deleteCard = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(cardValidationError.status).send({ message: cardValidationError.message });
+        return res
+          .status(cardValidationError.status)
+          .send({ message: cardValidationError.message });
       }
       return res
         .status(defaultError)
@@ -68,7 +70,12 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((card) => res.status(STATUS_CREATED).send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(cardValidationError.status).send({ message: cardValidationError.message });
+      }
+      return res.status(STATUS_OK).send({card });
+    })
     .catch((error) => {
       if (error.name === 'CastError') {
         return res
