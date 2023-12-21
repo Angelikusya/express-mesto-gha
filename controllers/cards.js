@@ -72,7 +72,7 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(cardValidationError.status).send({ message: cardValidationError.message });
+        return res.status(cardNotValidId.status).send({ message: cardNotValidId.message });
       }
       return res.status(STATUS_OK).send({card });
     })
