@@ -44,9 +44,12 @@ const deleteCard = (req, res) => {
   cardModel.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(cardNotValidId.status).send({ message: cardNotValidId.message });
-      }
-      res.status(cardNotValidId.status).send({ message: cardNotValidId.message });
+        return res
+          .status(cardNotValidId.status)
+          .send({ message: cardNotValidId.message });
+      } res
+        .status(cardNotValidId.status)
+        .send({ message: cardNotValidId.message });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -86,7 +89,9 @@ const deleteLikeCard = (req, res) => {
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(cardValidationError.staus).send({ message: cardValidationError.message });
+        return res
+          .status(cardValidationError.status)
+          .send({ message: cardValidationError.message });
       }
       return res
         .status(defaultError)
