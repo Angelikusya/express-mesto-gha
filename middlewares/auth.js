@@ -1,17 +1,16 @@
 const jwt = require('jsonwebtoken');
 
-// const devsecret = 'dev__secret';
+const { JWT_SECRET = 'SECRET_KEY' } = process.env;
 
 const auth = (req, res, next) => {
-  let payload;
   const { authorization } = req.headers;
-
   if (!authorization) {
     return next(new Error('NotAuthorized'));
   }
   const token = authorization.replace('Bearer ', '');
+  let payload;
   try {
-    payload = jwt.verify(token, 'dev__secret');
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (error) {
     if (error.message === 'NotAutanticate') {
       return res
