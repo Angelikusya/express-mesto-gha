@@ -16,12 +16,12 @@ mongoose.connect(`${MONGO_URL}`)
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '6582cb6777372dd5dba31a9f',
-  };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '6582cb6777372dd5dba31a9f',
+//   };
+//   next();
+// });
 app.use(helmet());
 app.use(router);
 

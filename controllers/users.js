@@ -1,4 +1,8 @@
+const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
+const generateToken = require('../utils/jwt');
+const cookieParser = require('cookie-parser');
+
 const {
   defaultError,
   userValidationError,
@@ -51,11 +55,22 @@ const getUserByID = (req, res) => {
 
 // создать нового пользователя
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  userModel.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  return bcrypt.hash(password, 10)
+    .then((hash) => userModel.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => res
       .status(STATUS_CREATED)
-      .send(user))
+      .send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         return res
@@ -118,10 +133,39 @@ const updateUserAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  userModel.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return res.status(401).send({ message: 'Неправильные почта или пароль' });
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            // хеши не совпали — отклоняем промис
+            return res.status(401).send({ message: 'Неправильные почта или пароль' });
+          }
+          const token = generateToken({ _id: user._id });
+          res.cookie('token', token, { httpOnly: true });
+          return res
+            .status(STATUS_OK)
+            .send({ token });
+        });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
 module.exports = {
   getUsers,
   getUserByID,
   createUser,
   updateUserInfo,
   updateUserAvatar,
+  login,
 };
