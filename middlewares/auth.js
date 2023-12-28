@@ -5,29 +5,24 @@ const { JWT_SECRET = 'SECRET_KEY' } = process.env;
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
-    return next(new Error('NotAuthorized'));
+    return res.status(401).json({ message: 'Необходима авторизация' });
   }
   const token = authorization.replace('Bearer ', '');
   let payload;
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (error) {
-    if (error.message === 'NotAutanticate') {
-      return res
-        .status(401)
-        .send({ message: 'Неправильный email или пароль' });
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ message: 'С токеном что-то не то' });
     }
-    if (error.message === 'JsonWebTokenError') {
-      return res
-        .status(401)
-        .send({ message: 'С токеном что-то не то' });
-    }
-    return res
-      .status(500)
-      .send({ message: 'Сервер отвалился' });
+    return res.status(401).json({ message: 'Необходима авторизация' });
+  }
+  if (!payload.userId) {
+    return res.status(401).json({ message: 'Необходима авторизация' });
   }
   req.user = payload;
-  return next();
+  next();
 };
 
 module.exports = auth;
+

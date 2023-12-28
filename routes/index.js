@@ -12,7 +12,7 @@ router.use('/cards', cardRouter);
 router.post('/signup', createUser);
 router.post('/signin', login);
 
-//router.use(auth);
+// router.use(auth);
 
 router.all('/*', (req, res) => {
   res.status(404).send({ message: 'Ресурc не найден' });
