@@ -10,7 +10,7 @@ router.use('/users', userRouter);
 router.use('/cards', cardRouter);
 
 router.post('/signup', createUser);
-router.post('/signin', auth, login);
+router.post('/signin', login);
 
 router.use(auth);
 
