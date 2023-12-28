@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
 const generateToken = require('../utils/jwt');
-const cookieParser = require('cookie-parser');
 
 const {
   defaultError,
