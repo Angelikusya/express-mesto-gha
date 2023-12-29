@@ -17,7 +17,7 @@ const userRouter = Router();
 
 userRouter.get('/', getUsers);
 userRouter.get('/me', getUser);
-userRouter.get('/:idUser', getUserByID);
+userRouter.get('/:idUser', validateUserId, getUserByID);
 userRouter.post('/', validateUserId, createUser);
 userRouter.patch('/me', validateUserUpdate, updateUserInfo);
 userRouter.patch('/me/avatar', validateAvatarUpdate, updateUserAvatar);
