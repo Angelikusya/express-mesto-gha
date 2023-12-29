@@ -23,7 +23,7 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  userModel.findById(req.params.userId)
+  userModel.findById(req.user._id)
     .then((user) => {
       if (!user) {
         return res
@@ -33,14 +33,10 @@ const getUser = (req, res) => {
       return res.status(STATUS_OK).send(user);
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError') {
         return res
           .status(userValidationError.status)
           .send({ message: userValidationError.message });
-      } if (error.message === 'notValidId') {
-        res
-          .status(userNotValidId.status)
-          .send({ message: userNotValidId.message });
       }
       return res
         .status(defaultError.status)
