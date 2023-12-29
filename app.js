@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 
 const { router } = require('./routes');
-const errorHandler = require('./middlewares/handleError');
 
 const app = express();
 const {

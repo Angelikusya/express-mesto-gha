@@ -30,10 +30,17 @@ const cardNotValidId = {
   message: 'Карточка с указанным ID не найдена',
 };
 
+// роут авторизации
+const unauthorizedError = {
+  status: 401,
+  message: 'Необходима авторизация',
+};
+
 module.exports = {
   defaultError,
   userValidationError,
   userNotValidId,
   cardValidationError,
   cardNotValidId,
+  unauthorizedError,
 };

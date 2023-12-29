@@ -1,12 +1,18 @@
 const jwt = require('jsonwebtoken');
 
 const { JWT_SECRET = 'SECRET_KEY' } = process.env;
+const {
+  unauthorizedError,
+  defaultError,
+} = require('../utils/errors');
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return res.status(401).send({ message: 'Необходима авторизация' });
+    return res
+      .status(unauthorizedError.status)
+      .send({ message: unauthorizedError.message });
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -14,19 +20,14 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (error) {
-    if (error.message === 'NotAutanticate') {
+    if (error.message === 'NotAutanticate' && 'JsonWebTokenError') {
       return res
-        .status(401)
-        .send({ message: 'Неправильный email или пароль' });
-    }
-    if (error.message === 'JsonWebTokenError') {
-      return res
-        .status(401)
-        .send({ message: 'С токеном что-то не то' });
+        .status(unauthorizedError.status)
+        .send({ message: unauthorizedError.message });
     }
     return res
-      .status(500)
-      .send({ message: 'Сервер отвалился' });
+      .status(defaultError.status)
+      .send({ message: defaultError.message });
   }
   req.user = payload;
   return next();
