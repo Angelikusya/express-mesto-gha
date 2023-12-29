@@ -54,8 +54,9 @@ const deleteCard = (req, res) => {
           .send({ message: cardNotValidId.message });
       }
       return cardModel.deleteOne(card._id)
-        .status(200)
-        .send({ message: cardNotValidId.message });
+        .then(() => res
+          .status(200)
+          .send({ message: cardNotValidId.message }));
     })
     .catch((error) => {
       if (error.name === 'CastError' && 'ValidationError') {
