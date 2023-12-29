@@ -135,7 +135,7 @@ const login = (req, res, next) => {
             return next(new UnauthorizedError('Необходима авторизация'));
           }
           const token = generateToken({ _id: user._id });
-          res.cookie('token', token, { httpOnly: true });
+          // res.cookie('token', token, { httpOnly: true });
           return res
             .status(STATUS_OK)
             .send({ token });
