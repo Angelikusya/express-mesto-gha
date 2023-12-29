@@ -164,7 +164,7 @@ const login = (req, res) => {
       if (!user) {
         return res
           .status(unauthorizedError.status)
-          .send({ message: unauthorizedError.message});
+          .send({ message: unauthorizedError.message });
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
@@ -172,7 +172,7 @@ const login = (req, res) => {
             // хеши не совпали — отклоняем
             return res
               .status(unauthorizedError.status)
-              .send({ message: unauthorizedError.message});
+              .send({ message: unauthorizedError.message });
           }
           const token = generateToken({ _id: user._id });
           res.cookie('token', token, { httpOnly: true });
