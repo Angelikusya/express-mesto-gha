@@ -46,8 +46,8 @@ const getUser = (req, res) => {
 
 // получить пользователя по определенному ID
 const getUserByID = (req, res) => {
-  const { idUser } = req.params;
-  userModel.findById(idUser)
+  const { userId } = req.params;
+  userModel.findById(userId)
     .then((user) => {
       if (!user) {
         return res
