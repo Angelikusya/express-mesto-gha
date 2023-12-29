@@ -88,7 +88,7 @@ const likeCard = (req, res, next) => {
 };
 
 // удалить лайк
-const deleteLikeCard = (req, res) => {
+const deleteLikeCard = (req, res, next) => {
   cardModel.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
@@ -96,19 +96,14 @@ const deleteLikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(cardNotValidId.status).send({ message: 'Некорректный id карточки' });
+        next(new NotFoundedError('Карточка с указанным ID не найдена'));
       }
       return res.status(STATUS_OK).send(card);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res
-          .status(cardValidationError.status)
-          .send({ message: cardValidationError.message });
+        next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
       }
-      return res
-        .status(cardValidationError.status)
-        .send({ message: cardValidationError.message });
     });
 };
 
