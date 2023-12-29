@@ -33,16 +33,21 @@ const getUser = (req, res) => {
       return res.status(STATUS_OK).send(user);
     })
     .catch((error) => {
+      if (error.name === 'CastError')
+        return res
+          .status(userNotValidId.status)
+          .send( {message: userNotValidId.message });
       if (error.name === 'ValidationError') {
         return res
           .status(userValidationError.status)
-          .send({ message: userValidationError.message });
+          .send( {message: userValidationError.message });
       }
       return res
         .status(defaultError.status)
-        .send({ message: defaultError.message });
-    });
+        .send( {message: defaultError.message });
+})
 };
+;
 
 // получить пользователя по определенному ID
 const getUserByID = (req, res) => {
