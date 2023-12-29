@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+const URL = /^(http:\/\/|https:\/\/)(www\.)?([\w-]+(\.[\w-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/;
 
 const validateUserInfo = celebrate({
   body: Joi.object().keys({
@@ -26,7 +27,7 @@ const validateUserUpdate = celebrate({
 
 const validateAvatarUpdate = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required(),
+    avatar: Joi.string().required().pattern(URL),
   }),
 });
 
