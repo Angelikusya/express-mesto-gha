@@ -63,7 +63,7 @@ const deleteCard = (req, res, next) => {
 };
 
 // поставить лайк
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   cardModel.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -71,23 +71,19 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(cardNotValidId.status).send({ message: cardNotValidId.message });
+        next(new NotFoundedError('Карточка с указанным ID не найдена'));
+        return;
       }
-      return res.status(STATUS_OK).send({ card });
+      res
+        .status(STATUS_OK)
+        .send({ card });
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        return res
-          .status(cardValidationError.status)
-          .send({ message: cardValidationError.message });
+        next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
       } if (error.message === 'notValidId') {
-        res
-          .status(cardNotValidId.status)
-          .send({ message: cardNotValidId.message });
+        next(new NotFoundedError('Карточка с указанным ID не найдена'));
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
     });
 };
 
