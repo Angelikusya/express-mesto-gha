@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+
 const URL = /^(http:\/\/|https:\/\/)(www\.)?([\w-]+(\.[\w-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/;
 
 const validateUserInfo = celebrate({

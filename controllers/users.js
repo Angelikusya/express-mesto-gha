@@ -22,6 +22,32 @@ const getUsers = (req, res) => {
       .send({ message: defaultError.message }));
 };
 
+const getUser = (req, res) => {
+  userModel.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(userNotValidId.status)
+          .send({ message: userNotValidId.message });
+      }
+      res.status(STATUS_OK).send(user);
+    })
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        return res
+          .status(userValidationError.status)
+          .send({ message: userValidationError.message });
+      } if (error.message === 'notValidId') {
+        res
+          .status(userNotValidId.status)
+          .send({ message: userNotValidId.message });
+      }
+      return res
+        .status(defaultError.status)
+        .send({ message: defaultError.message });
+    });
+};
+
 // получить пользователя по определенному ID
 const getUserByID = (req, res) => {
   const { idUser } = req.params;
@@ -161,6 +187,7 @@ const login = (req, res) => {
 };
 
 module.exports = {
+  getUser,
   getUsers,
   getUserByID,
   createUser,
