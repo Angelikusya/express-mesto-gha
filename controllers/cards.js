@@ -41,12 +41,15 @@ const createCard = (req, res) => {
 
 // удалить карточку
 const deleteCard = (req, res) => {
-  cardModel.findByIdAndDelete(req.params.cardId)
+  cardModel.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         return res
           .status(cardNotValidId.status)
           .send({ message: cardNotValidId.message });
+      }
+      if (card.owner.toString() !== req.user._id) {
+        return res.status(403).send({ message: cardNotValidId.message });
       }
       return res.status(STATUS_OK).send({ card });
     })
