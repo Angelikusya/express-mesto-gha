@@ -1,4 +1,7 @@
 const cardModel = require('../models/cards');
+const BadRequestError = require('../errors/BadRequestError');
+const NotFoundedError = require('../errors/NotFoundedError');
+const ForbiddenError = require('../errors/ForbiddenError');
 const {
   defaultError,
   cardValidationError,
@@ -10,14 +13,14 @@ const STATUS_OK = 200;
 const STATUS_CREATED = 201;
 
 // получить все карточки
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   cardModel.find()
     .then((cards) => res
       .status(STATUS_OK)
       .send(cards))
-    .catch(() => res
-      .status(defaultError.status)
-      .send({ message: defaultError.message }));
+    .catch((err) => {
+      next(err);
+    });
 };
 
 // создать новую карточку
