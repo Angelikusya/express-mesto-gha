@@ -6,7 +6,6 @@ const {
   defaultError,
   cardValidationError,
   cardNotValidId,
-  forbidden,
 } = require('../utils/errors');
 
 const STATUS_OK = 200;
@@ -41,33 +40,25 @@ const createCard = (req, res, next) => {
 };
 
 // удалить карточку
-const deleteCard = (req, res) => {
-  cardModel.findById(req.params.cardId)
+const deleteCard = (req, res, next) => {
+  cardModel.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res
-          .status(cardNotValidId.status)
-          .send({ message: cardNotValidId.message });
+        next(new NotFoundedError('Карточка с указанным ID не найдена'));
+        return;
       }
       if (card.owner.toString() !== req.user._id) {
-        return res
-          .status(forbidden.status)
-          .send({ message: forbidden.message });
+        next(new ForbiddenError('Карточка с указанным ID не найдена'));
+        return;
       }
-      return cardModel.deleteOne(card._id)
-        .then(() => res
-          .status(200)
-          .send({ message: cardNotValidId.message }));
+      res
+        .status(STATUS_OK)
+        .send(card);
     })
     .catch((error) => {
       if (error.name === 'CastError' && 'ValidationError') {
-        return res
-          .status(cardValidationError.status)
-          .send({ message: cardValidationError.message });
+        next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
     });
 };
 
