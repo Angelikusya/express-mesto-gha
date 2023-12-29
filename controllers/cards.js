@@ -36,14 +36,17 @@ const createCard = (req, res, next) => {
 
 // удалить карточку
 const deleteCard = (req, res, next) => {
-  cardModel.findByIdA(req.params.cardId)
+  cardModel.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return next(new NotFoundedError('Карточка с указанным ID не найдена'));
+        next(new NotFoundedError('Карточка с указанным ID не найдена'));
+        return;
       }
       if (card.owner.toString() !== req.user._id) {
-        return next(new ForbiddenError('Карточка с указанным ID не найдена'));
-      } return cardModel.deleteOne(card._id)
+        next(new ForbiddenError('Карточка с указанным ID не найдена'));
+        return;
+      }
+      res
         .status(STATUS_OK)
         .send(card);
     })
