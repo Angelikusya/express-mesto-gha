@@ -24,7 +24,7 @@ const getCards = (req, res, next) => {
 };
 
 // создать новую карточку
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   console.log(req.user._id);
   cardModel.create({ name, link, owner: req.user._id })
@@ -33,13 +33,10 @@ const createCard = (req, res) => {
       .send({ _id: card._id }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res
-          .status(cardValidationError.status)
-          .send({ message: cardValidationError.message });
+        next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
+      } else {
+        next(error);
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
     });
 };
 
