@@ -50,7 +50,7 @@ const getUserByID = (req, res, next) => {
       if (error.name === 'CastError') {
         return next(new BadRequestError('Переданы некорректные данные при работе с пользователем'));
       }
-      return next();
+      return next(error);
     });
 };
 
