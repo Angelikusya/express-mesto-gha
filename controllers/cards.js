@@ -91,13 +91,13 @@ const deleteLikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        next(new NotFoundedError('Карточка с указанным ID не найдена'));
+        return next(new NotFoundedError('Карточка с указанным ID не найдена'));
       }
       return res.status(STATUS_OK).send(card);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
+        return next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
       }
       return next(error);
     });
