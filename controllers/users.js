@@ -6,7 +6,6 @@ const ConflictError = require('../errors/ConflictError');
 const NotFoundedError = require('../errors/NotFoundedError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
-
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
 
@@ -79,7 +78,7 @@ const createUser = (req, res, next) => {
       } if (error.code === 11000) {
         return next(new ConflictError('Пользователь с такими данными уже существует'));
       }
-      return next();
+      return next(error);
     });
 };
 
@@ -99,7 +98,7 @@ const updateUserInfo = (req, res, next) => {
       } if (error.message === 'notValidId') {
         return next(new NotFoundedError('Пользователь по указанному _id не найден'));
       }
-      return next();
+      return next(error);
     });
 };
 
@@ -117,7 +116,7 @@ const updateUserAvatar = (req, res, next) => {
       } if (error.message === 'notValidId') {
         return next(new NotFoundedError('Пользователь по указанному _id не найден'));
       }
-      return next();
+      return next(error);
     });
 };
 
