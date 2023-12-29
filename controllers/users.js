@@ -30,7 +30,7 @@ const getUser = (req, res) => {
           .status(userNotValidId.status)
           .send({ message: userNotValidId.message });
       }
-      res.status(STATUS_OK).send(user);
+      return res.status(STATUS_OK).send(user);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
@@ -169,7 +169,7 @@ const login = (req, res) => {
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            // хеши не совпали — отклоняем промис
+            // хеши не совпали — отклоняем
             return res.status(401).send({ message: 'Неправильные почта или пароль' });
           }
           const token = generateToken({ _id: user._id });
