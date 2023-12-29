@@ -26,7 +26,7 @@ app.use(helmet());
 app.use(router);
 
 app.use(errors());
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
