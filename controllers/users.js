@@ -101,12 +101,18 @@ const createUser = (req, res) => {
         return res
           .status(userValidationError.status)
           .send({ message: userValidationError.message });
+      } if (error.code === 11000) {
+        return res
+          .status(409)
+          .send({ message: "пользователь с таким email уже существует"});
       }
       return res
         .status(defaultError.status)
         .send({ message: defaultError.message });
-    });
+    };
+  );
 };
+
 
 // обновить информацию о пользователе
 const updateUserInfo = (req, res) => {
