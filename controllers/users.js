@@ -38,11 +38,6 @@ const getUser = (req, res) => {
           .status(userNotValidId.status)
           .send({ message: userNotValidId.message });
       }
-      if (error.name === 'ValidationError') {
-        return res
-          .status(userValidationError.status)
-          .send({ message: userValidationError.message });
-      }
       return res
         .status(defaultError.status)
         .send({ message: defaultError.message });
