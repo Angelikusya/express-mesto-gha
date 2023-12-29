@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const errorHandler = require('./middlewares/errorHandler');
 
 const { router } = require('./routes');
 
@@ -25,6 +26,7 @@ app.use(helmet());
 app.use(router);
 
 app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает

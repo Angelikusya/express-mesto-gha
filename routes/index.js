@@ -21,7 +21,6 @@ router.use('/cards', cardRouter);
 
 router.all('/*', (req, res, next) => {
   next(new NotFoundedError('Карточка с указанным ID не найдена'));
-  return next();
 });
 
 module.exports = { router };
