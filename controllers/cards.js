@@ -49,7 +49,9 @@ const deleteCard = (req, res) => {
           .send({ message: cardNotValidId.message });
       }
       if (card.owner.toString() !== req.user._id) {
-        return res.status(403).send({ message: cardNotValidId.message });
+        return cardModel.deleteOne(card._id)
+          .status(403)
+          .send({ message: cardNotValidId.message });
       }
       return res.status(STATUS_OK).send({ card });
     })
