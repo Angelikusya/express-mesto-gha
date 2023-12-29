@@ -1,19 +1,11 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
 const generateToken = require('../utils/jwt');
-const BadRequestError  = require('../errors/BadRequestError');
-const ConflictError  = require('../errors/ConflictError');
-const ForbiddenError  = require('../errors/ForbiddenError');
-const NotFoundedError  = require('../errors/NotFoundedError');
-const UnauthorizedError  = require('../errors/UnauthorizedError');
+const BadRequestError = require('../errors/BadRequestError');
+const ConflictError = require('../errors/ConflictError');
+const NotFoundedError = require('../errors/NotFoundedError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 
-const {
-  defaultError,
-  userValidationError,
-  userNotValidId,
-  conflictError,
-  unauthorizedError,
-} = require('../utils/errors');
 
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
@@ -44,14 +36,12 @@ const getUser = (req, res, next) => {
 };
 
 // получить пользователя по определенному ID
-const getUserByID = (req, res) => {
+const getUserByID = (req, res, next) => {
   const { idUser } = req.params;
   userModel.findById(idUser)
     .then((user) => {
       if (!user) {
-        return res
-          .status(userNotValidId.status)
-          .send({ message: userNotValidId.message });
+        return next(new NotFoundedError('Пользователь по указанному _id не найден'));
       }
       return res
         .status(STATUS_OK)
@@ -59,18 +49,14 @@ const getUserByID = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        return res
-          .status(userValidationError.status)
-          .send({ message: userValidationError.message });
+        return next(new BadRequestError('Переданы некорректные данные при работе с пользователем'));
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
+      return next();
     });
 };
 
 // создать нового пользователя
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -89,22 +75,16 @@ const createUser = (req, res) => {
       }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res
-          .status(userValidationError.status)
-          .send({ message: userValidationError.message });
+        return next(new BadRequestError('Переданы некорректные данные при работе с пользователем'));
       } if (error.code === 11000) {
-        return res
-          .status(conflictError.status)
-          .send({ message: conflictError.message });
+        return next(new ConflictError('Пользователь с такими данными уже существует'));
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
+      return next();
     });
 };
 
 // обновить информацию о пользователе
-const updateUserInfo = (req, res) => {
+const updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
@@ -115,22 +95,16 @@ const updateUserInfo = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res
-          .status(userValidationError.status)
-          .send({ message: userValidationError.message });
+        return next(new BadRequestError('Переданы некорректные данные при работе с пользователем'));
       } if (error.message === 'notValidId') {
-        res
-          .status(userNotValidId.status)
-          .send({ message: userNotValidId.message });
+        return next(new NotFoundedError('Пользователь по указанному _id не найден'));
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
+      return next();
     });
 };
 
 // обновить аватар пользователя
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   console.log(req.user);
   userModel.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
@@ -139,37 +113,27 @@ const updateUserAvatar = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        return res
-          .status(userValidationError.status)
-          .send({ message: userValidationError.message });
+        return next(new BadRequestError('Переданы некорректные данные при работе с пользователем'));
       } if (error.message === 'notValidId') {
-        res
-          .status(userNotValidId.status)
-          .send({ message: userNotValidId.message });
+        return next(new NotFoundedError('Пользователь по указанному _id не найден'));
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
+      return next();
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   userModel.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return res
-          .status(unauthorizedError.status)
-          .send({ message: unauthorizedError.message });
+        return next(new UnauthorizedError('Необходима авторизация'));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
             // хеши не совпали — отклоняем
-            return res
-              .status(unauthorizedError.status)
-              .send({ message: unauthorizedError.message });
+            return next(new UnauthorizedError('Необходима авторизация'));
           }
           const token = generateToken({ _id: user._id });
           res.cookie('token', token, { httpOnly: true });
@@ -178,10 +142,8 @@ const login = (req, res) => {
             .send({ token });
         });
     })
-    .catch(() => {
-      res
-        .status(unauthorizedError.status)
-        .send({ message: unauthorizedError.message });
+    .catch((error) => {
+      next(error);
     });
 };
 
