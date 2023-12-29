@@ -23,7 +23,7 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  userModel.findById(req.user._id)
+  userModel.findById(req.user.idUser)
     .then((user) => {
       if (!user) {
         return res
