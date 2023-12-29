@@ -3,6 +3,7 @@ const {
   defaultError,
   cardValidationError,
   cardNotValidId,
+  forbidden,
 } = require('../utils/errors');
 
 const STATUS_OK = 200;
@@ -50,8 +51,8 @@ const deleteCard = (req, res) => {
       }
       if (card.owner.toString() !== req.user._id) {
         return res
-          .status(403)
-          .send({ message: cardNotValidId.message });
+          .status(forbidden.status)
+          .send({ message: forbidden.message });
       }
       return cardModel.deleteOne(card._id)
         .then(() => res

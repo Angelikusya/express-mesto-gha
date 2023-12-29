@@ -36,6 +36,16 @@ const unauthorizedError = {
   message: 'Необходима авторизация',
 };
 
+const conflictError = {
+  status: 409,
+  message: 'Пользователь с такими данными уже существует',
+};
+
+const forbidden = {
+  status: 403,
+  message: 'Нет прав на удаление карточки',
+};
+
 module.exports = {
   defaultError,
   userValidationError,
@@ -43,4 +53,6 @@ module.exports = {
   cardValidationError,
   cardNotValidId,
   unauthorizedError,
+  conflictError,
+  forbidden,
 };
