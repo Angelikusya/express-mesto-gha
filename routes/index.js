@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { userRouter } = require('./users');
 const { cardRouter } = require('./cards');
 const { login, createUser } = require('../controllers/users');
-const NotFoundedError  = require('../errors/NotFoundedError');
+const NotFoundedError = require('../errors/NotFoundedError');
 const {
   validateUserAuthentication,
   validateUserInfo,
@@ -20,8 +20,8 @@ router.use('/users', userRouter);
 router.use('/cards', cardRouter);
 
 router.all('/*', (req, res, next) => {
-  next(new NotFoundedError('Ресурc не найден'));
-  return next();
+  const error = new NotFoundedError('Ресурc не найден');
+  next(error);
 });
 
 module.exports = { router };
