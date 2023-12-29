@@ -2,11 +2,6 @@ const cardModel = require('../models/cards');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundedError = require('../errors/NotFoundedError');
 const ForbiddenError = require('../errors/ForbiddenError');
-const {
-  defaultError,
-  cardValidationError,
-  cardNotValidId,
-} = require('../utils/errors');
 
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;

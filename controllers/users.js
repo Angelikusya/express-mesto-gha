@@ -1,6 +1,11 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../models/user');
 const generateToken = require('../utils/jwt');
+const BadRequestError  = require('../errors/BadRequestError');
+const ConflictError  = require('../errors/ConflictError');
+const ForbiddenError  = require('../errors/ForbiddenError');
+const NotFoundedError  = require('../errors/NotFoundedError');
+const UnauthorizedError  = require('../errors/UnauthorizedError');
 
 const {
   defaultError,
@@ -14,35 +19,27 @@ const STATUS_OK = 200;
 const STATUS_CREATED = 201;
 
 // получить всех пользователя
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   userModel.find()
     .then((users) => res
       .status(STATUS_OK)
       .send(users))
-    .catch(() => res
-      .status(defaultError.status)
-      .send({ message: defaultError.message }));
+    .catch(() => next());
 };
 
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   userModel.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return res
-          .status(userNotValidId.status)
-          .send({ message: userNotValidId.message });
+        return next(new NotFoundedError('Пользователь по указанному _id не найден'));
       }
       return res.status(STATUS_OK).send(user);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        return res
-          .status(userNotValidId.status)
-          .send({ message: userNotValidId.message });
+        return next(new BadRequestError('Переданы некорректные данные при работе с пользователем'));
       }
-      return res
-        .status(defaultError.status)
-        .send({ message: defaultError.message });
+      return next(error);
     });
 };
 
