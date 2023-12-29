@@ -104,15 +104,13 @@ const createUser = (req, res) => {
       } if (error.code === 11000) {
         return res
           .status(409)
-          .send({ message: "пользователь с таким email уже существует"});
+          .send({ message: 'пользователь с таким email уже существует' });
       }
       return res
         .status(defaultError.status)
         .send({ message: defaultError.message });
-    };
-  );
+    });
 };
-
 
 // обновить информацию о пользователе
 const updateUserInfo = (req, res) => {
