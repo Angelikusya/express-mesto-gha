@@ -96,9 +96,10 @@ const deleteLikeCard = (req, res, next) => {
       return res.status(STATUS_OK).send(card);
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
       }
+      return next(error);
     });
 };
 
