@@ -20,8 +20,8 @@ router.use('/users', userRouter);
 router.use('/cards', cardRouter);
 
 router.all('/*', (req, res, next) => {
-  const error = new NotFoundedError('Ресурc не найден');
-  next(error);
+  next(new NotFoundedError('Страница не найдена'));
+  return next();
 });
 
 module.exports = { router };
