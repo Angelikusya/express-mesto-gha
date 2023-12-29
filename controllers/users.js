@@ -6,6 +6,8 @@ const {
   defaultError,
   userValidationError,
   userNotValidId,
+  conflictError,
+  unauthorizedError,
 } = require('../utils/errors');
 
 const STATUS_OK = 200;
@@ -95,8 +97,8 @@ const createUser = (req, res) => {
           .send({ message: userValidationError.message });
       } if (error.code === 11000) {
         return res
-          .status(409)
-          .send({ message: 'пользователь с таким email уже существует' });
+          .status(conflictError.status)
+          .send({ message: conflictError.message });
       }
       return res
         .status(defaultError.status)
@@ -160,13 +162,17 @@ const login = (req, res) => {
   userModel.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return res.status(401).send({ message: 'Неправильные почта или пароль' });
+        return res
+          .status(unauthorizedError.status)
+          .send({ message: unauthorizedError.message});
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
             // хеши не совпали — отклоняем
-            return res.status(401).send({ message: 'Неправильные почта или пароль' });
+            return res
+              .status(unauthorizedError.status)
+              .send({ message: unauthorizedError.message});
           }
           const token = generateToken({ _id: user._id });
           res.cookie('token', token, { httpOnly: true });
@@ -175,10 +181,10 @@ const login = (req, res) => {
             .send({ token });
         });
     })
-    .catch((err) => {
+    .catch(() => {
       res
-        .status(401)
-        .send({ message: err.message });
+        .status(unauthorizedError.status)
+        .send({ message: unauthorizedError.message });
     });
 };
 
