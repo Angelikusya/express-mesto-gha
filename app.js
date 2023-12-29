@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 
 const { router } = require('./routes');
+const errorHandler = require('./middlewares/handleError');
 
 const app = express();
 const {
@@ -21,17 +22,11 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '6582cb6777372dd5dba31a9f',
-//   };
-//   next();
-// });
-
 app.use(helmet());
 app.use(router);
 
 app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
