@@ -12,8 +12,8 @@ const getCards = (req, res, next) => {
     .then((cards) => res
       .status(STATUS_OK)
       .send(cards))
-    .catch((err) => {
-      next(err);
+    .catch((error) => {
+      next(error);
     });
 };
 
@@ -36,24 +36,25 @@ const createCard = (req, res, next) => {
 
 // удалить карточку
 const deleteCard = (req, res, next) => {
-  cardModel.findByIdAndDelete(req.params.cardId)
+  cardModel.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        next(new NotFoundedError('Карточка с указанным ID не найдена'));
-        return;
+        return next(new NotFoundedError('Карточка с указанным ID не найдена'));
       }
       if (card.owner.toString() !== req.user._id) {
-        next(new ForbiddenError('Карточка с указанным ID не найдена'));
-        return;
+        return next(new ForbiddenError('Карточка с указанным ID не найдена'));
       }
-      res
-        .status(STATUS_OK)
-        .send(card);
+      return cardModel.deleteOne(card._id)
+        .then(() => res
+          .status(STATUS_OK)
+          .send(card))
+        .catch((err) => next(err));
     })
     .catch((error) => {
-      if (error.name === 'CastError' && 'ValidationError') {
+      if (error.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
       }
+      next(error);
     });
 };
 
@@ -76,9 +77,8 @@ const likeCard = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
-      } if (error.message === 'notValidId') {
-        next(new NotFoundedError('Карточка с указанным ID не найдена'));
       }
+      next(error);
     });
 };
 
@@ -97,9 +97,9 @@ const deleteLikeCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        return next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
+        next(new BadRequestError('Переданы некорректные данные при работе с карточкой'));
       }
-      return next(error);
+      next(error);
     });
 };
 
